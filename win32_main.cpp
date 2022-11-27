@@ -1,5 +1,5 @@
-#include "types.h"
 #include "os.h"
+#include "timer.h"
 #include "win32.h"
 
 struct W32AppCode
@@ -143,24 +143,25 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE prev_instance, PSTR cmd_line, i
     os_state.timer_sleep         = W32Sleep;
     
     // threads
-    os_state.create_thread                      = W32CreateThread;
-    os_state.thread_locked_increment            = W32LockedIncrement;
-    os_state.thread_locked_increment64          = W32LockedIncrement64;
-    os_state.thread_locked_exchange_add         = W32LockedExchangeAdd;
-    os_state.thread_locked_exchange_add64       = W32LockedExchangeAdd64;
-    os_state.thread_locked_exchange             = W32LockedExchange;
-    os_state.thread_locked_exchange64           = W32LockedExchange64;
-    os_state.thread_locked_exchange_ptr         = W32LockedExchangePtr;
-    os_state.thread_locked_compare_exchange     = W32LockedCompareExchange;
-    os_state.thread_locked_compare_exchange64   = W32LockedCompareExchange64;
-    os_state.thread_locked_compare_exchange_ptr = W32LockedCompareExchangePtr;
+    os_state.create_thread               = W32CreateThread;
+    os_state.locked_increment            = W32LockedIncrement;
+    os_state.locked_increment64          = W32LockedIncrement64;
+    os_state.locked_exchange_add         = W32LockedExchangeAdd;
+    os_state.locked_exchange_add64       = W32LockedExchangeAdd64;
+    os_state.locked_exchange             = W32LockedExchange;
+    os_state.locked_exchange64           = W32LockedExchange64;
+    os_state.locked_exchange_ptr         = W32LockedExchangePtr;
+    os_state.locked_compare_exchange     = W32LockedCompareExchange;
+    os_state.locked_compare_exchange64   = W32LockedCompareExchange64;
+    os_state.locked_compare_exchange_ptr = W32LockedCompareExchangePtr;
     
+    global_os_state = os_state;
     
     W32AppCode app_code = {};
     W32LoadAppCode(&app_code, "e:/work/build/app_code.dll");
     if(app_code.result)
     {
-        app_code.update_and_render(&os_state);
+        app_code.update_and_render(&global_os_state);
     }
     
     ExitProcess(0);

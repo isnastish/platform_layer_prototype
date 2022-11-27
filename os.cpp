@@ -1,47 +1,30 @@
 #include "types.h"
 #include "os.h"
 #include "timer.cpp"
+#include "threads.cpp"
+#include "arena.cpp"
+#include "printf.cpp"
 
 #if _WIN32
 #include "win32.h"
+#define EXTERN extern "C" __declspec(dllexport)
+#else
+#define EXTERN extern "C"
 #endif
 
-extern "C" __declspec(dllexport) 
-APP_UPDATE_AND_RENDER(app_update_and_render)
+EXTERN APP_UPDATE_AND_RENDER(app_update_and_render)
 {
-#if _WIN32
-    Out("Hello from App Code\n");
-#endif
-}
-
-
-#if _WIN32
-BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
-{
-    switch(reason) 
+    OsState *os_state = _os_state;
+    
     {
-        case DLL_PROCESS_ATTACH:
-        {
-            // Initialize once for each new process.
-            // Return FALSE to fail DLL load.s
-            Out_s("DLL_PROCESS_ATTACH: %i\n", DLL_PROCESS_ATTACH);
-        }break;
-        case DLL_THREAD_ATTACH:
-        {
-            // Do thread-specific initialization.
-            Out_s("DLL_THREAD_ATTACH: %i\n", DLL_THREAD_ATTACH);
-        }break;
-        case DLL_THREAD_DETACH:
-        {
-            // Do thread-specific cleanup.
-            Out_s("DLL_THREAD_DETACH: %i\n", DLL_THREAD_DETACH);
-        }break;
-        case DLL_PROCESS_DETACH:
-        {
-            // Perform any necessary cleanup.
-            Out_s("DLL_PROCESS_DETACH: %i\n", DLL_PROCESS_DETACH);
-        }break;
+        Arena arena = arena_init(Kilobytes(4));
+        v3 camera_d = V3(0, 0, 1);
+        v3 camera_p = V3(0, -1, 0);
+        char *fmt = "CameraDirection: %v3\nCameraPosition: %v3\n\n";
+        
+        Printf(fmt, camera_d, camera_p);
+        
+        string format = String(&arena, fmt, (fmt + StrLen(fmt)));
+        Printf_s(&format, camera_d, camera_p);
     }
-    return(TRUE);
 }
-#endif

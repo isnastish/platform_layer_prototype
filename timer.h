@@ -1,4 +1,7 @@
 #ifndef TIMER_H
+// NOTE(al): We shouldn't include "os.h" file here.
+// Maybe we can use global_os_state instead of passing OsState
+// as a parameter to timer_push/timer_pop functions.
 #include "os.h"
 
 struct Timer

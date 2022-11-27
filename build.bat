@@ -9,7 +9,7 @@ set CommonLinkerOptions=user32.lib kernel32.lib
 if not exist ..\..\build ( mkdir ..\..\build )
 pushd ..\..\build
 
-cl  -Od -Zi ..\win32_threads\code\os.cpp /link /dll /out:app_code.dll
+cl -nologo -Od -Zi -DASSERT_ENABLED ..\win32_threads\code\os.cpp -Fapp.map /LD /link /out:app_code.dll
 cl %CommonCompilerOptions% ..\win32_threads\code\win32_main.cpp /link %CommonLinkerOptions% /out:threads.exe
 
 popd
